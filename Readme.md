@@ -18,6 +18,11 @@ Install dependencies:
 npm install
 ```
 
+Start the PostgreSQL database service (if not already running):
+```
+sudo systemctl start postgresql
+```
+
 Create a .env file in the backend folder and add the following content:
 
 ```
