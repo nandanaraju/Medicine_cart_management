@@ -6,14 +6,16 @@ const Product = require("../models/Product");
 
 router.post("/add", async (req, res) => {
   try {
-    const { userId, productId, quantity } = req.body;
+    console.log("Request Body:", req.body);
 
-    const user = await User.findOne({ where: { id: userId } });
+    const { userId, productId, quantity } = req.body;
+    console.log("hi",userId,productId);
+    const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const product = await Product.findOne({ where: { id: productId } });
+    const product = await Product.findByPk(productId);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
@@ -35,15 +37,22 @@ router.post("/add", async (req, res) => {
 });
 
 router.get("/:userId", async (req, res) => {
-    try {
+  try {
+      console.log("Request Params:", req.params); // Debugging log
       const { userId } = req.params;
+
+      if (!userId) {
+          return res.status(400).json({ message: "User ID is required" });
+      }
+
       const cartItems = await Cart.findAll({ where: { userId }, include: [Product] });
       res.status(200).json(cartItems);
-    } catch (error) {
+  } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Internal server error" });
-    }
-  });
+  }
+});
+
   
   router.put("/update", async (req, res) => {
     try {

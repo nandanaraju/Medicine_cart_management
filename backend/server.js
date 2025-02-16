@@ -4,14 +4,15 @@ const cookieParser = require('cookie-parser');
 
 require("dotenv").config();
 
+const app = express();
+
+
 const authRoutes = require("./src/routes/authRoutes");
 const productRoutes = require("./src/routes/productRoutes");
 const sequelize = require("./src/config/database");
 const cartRoutes = require("./src/routes/cartRoutes");
 const profileRoutes = require("./src/routes/profileRoutes");
 
-const app = express();
-app.use(cookieParser());
 
 
 app.use(
@@ -22,6 +23,8 @@ app.use(
     })
 );
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
