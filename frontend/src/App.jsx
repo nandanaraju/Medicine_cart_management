@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import ProfilePage from "./pages/Profile";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetail, { productLoader } from "./pages/ProductDetail";
+import AddProductPage from "./pages/AddProductPage";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/add-product" element={<AddProductPage />} />
+
           <Route
             path="/product/:id"
             element={<ProductDetail/>}

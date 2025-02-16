@@ -12,20 +12,24 @@ const ProductDetail = () => {
 
     useEffect(() => {
         const getUserType = () => {
-            const authToken = document.cookie
-                .split('; ')
-                .find(row => row.startsWith('Authtoken'))
-                ?.split('=')[1];
-            if (authToken) {
-                const decoded = jwtDecode(authToken);
-                return decoded.userType;
+            try {
+                const authToken = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('Authtoken='))
+                    ?.split('=')[1];
+
+                if (authToken) {
+                    const decoded = jwtDecode(authToken);
+                    return decoded.userType;
+                }
+            } catch (error) {
+                console.error("Error decoding token:", error);
             }
             return null;
         };
 
         setUserType(getUserType());
     }, []);
-
 
     useEffect(() => {
         fetch(`${API_URL}/${id}`)
@@ -42,13 +46,13 @@ const ProductDetail = () => {
             <p className="text-gray-600 mt-2">{product.productDescription}</p>
             <p className="text-xl font-bold mt-4">Price: ${product.productPrice}</p>
             <p className="mt-2">Quantity Available: {product.productQuantity}</p>
-            
+
             {userType === "admin" ? (
                 <div className="mt-4 flex space-x-4">
                     <button className="bg-blue-500 text-white px-4 py-2 rounded">Edit</button>
                     <button className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
                 </div>
-            ) : (
+            ) : userType === "user" ? (
                 <div className="mt-4">
                     <label className="block mb-2 text-sm font-medium">Enter Quantity:</label>
                     <input 
@@ -60,6 +64,8 @@ const ProductDetail = () => {
                     />
                     <button className="mt-4 bg-green-500 text-white px-4 py-2 rounded">Add to Cart</button>
                 </div>
+            ) : (
+                <p className="mt-4 text-gray-500">Loading user permissions...</p>
             )}
         </div>
     );

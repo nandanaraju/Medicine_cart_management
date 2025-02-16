@@ -16,18 +16,24 @@ const Login = () => {
             const res = await fetch("http://localhost:5000/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                credentials: "include", // This is important to store the token in cookies
+                credentials: "include", 
                 body: JSON.stringify(userData),
             });
 
+            const data = await res.json(); // Ensure data is assigned before checking
+
             if (res.ok) {
-                const data = await res.json();
                 toast.success(data.message);
+
+                console.log("User Type:", data.userType); // Debugging userType
+
                 if (data.userType === "admin") {
-                    navigate("/admin");
+                    navigate("/dashboard"); // ✅ Redirect admins
+                } else if (data.userType === "user") {
+                    navigate("/products"); // ✅ Redirect users
                 } else {
-                    navigate("/products");
-                }  
+                    toast.error("Invalid user type received.");
+                }
             } else {
                 toast.error(data.message || "Invalid credentials");
             }

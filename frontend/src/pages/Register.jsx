@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 
 const Signup = () => {
-    const [name, setName] = useState("");
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [userType, setUserType] = useState("user");
@@ -12,7 +12,7 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const userData = { name, email, password, userType };
+        const userData = { username, email, password, userType };
 
         try {
             const res = await fetch("http://localhost:5000/api/auth/register", {
@@ -41,9 +41,9 @@ const Signup = () => {
                 <form onSubmit={handleSubmit}>
                     <input
                         type="text"
-                        placeholder="Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        placeholder="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         className="w-full mb-4 p-2 border rounded"
                         required
                     />
