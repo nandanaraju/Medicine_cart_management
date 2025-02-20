@@ -7,14 +7,13 @@ const { verifyToken } = require("../middleware/authMiddleware");
 
 router.get("/:id", verifyToken, async (req, res) => {
     try {
-        const userId  = req.user; // Fetch userId from middleware
-        console.log("user",userId);
+        const userId = req.userId;  // Correct way to get user ID from middleware
+        console.log("User ID:", userId);
 
         if (!userId) {
             return res.status(400).json({ message: "Invalid user ID" });
         }
 
-        // Fetch user excluding password field
         const user = await User.findByPk(userId, {
             attributes: { exclude: ["password"] },
         });
@@ -23,7 +22,6 @@ router.get("/:id", verifyToken, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // Fetch user's cart items
         const cartItems = await Cart.findAll({
             where: { userId },
             include: [
@@ -40,5 +38,6 @@ router.get("/:id", verifyToken, async (req, res) => {
         return res.status(500).json({ message: "Failed to fetch profile", error: error.message });
     }
 });
+
 
 module.exports = router;

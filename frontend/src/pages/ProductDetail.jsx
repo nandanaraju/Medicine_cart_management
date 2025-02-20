@@ -10,7 +10,7 @@ const ProductDetail = () => {
     const [userType, setUserType] = useState(null);
     const [product, setProduct] = useState(null);
     const [quantity, setQuantity] = useState('');
-    const navigate =useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getUserType = () => {
@@ -35,12 +35,12 @@ const ProductDetail = () => {
 
     const cartAdding = async () => {
         if (!quantity || Number(quantity) <= 0) {
-            console.log('Please enter a valid quantity.');
+            toast.error('Please enter a valid quantity.');
             return;
         }
     
         if (Number(quantity) > product.productQuantity) {
-            console.log('Quantity exceeds available stock!');
+            toast.error('Quantity exceeds available stock!');
             return;
         }
     
@@ -50,31 +50,23 @@ const ProductDetail = () => {
                 .find(row => row.startsWith('Authtoken='))
                 ?.split('=')[1];
     
-            console.log("Auth Token:", authToken);
-    
             if (!authToken) {
-                console.log('User not authenticated.');
+                toast.error('User not authenticated.');
                 return;
             }
     
             const decoded = jwtDecode(authToken);
-            console.log("Decoded Token:", decoded);
-    
             const userId = decoded.userId || decoded.id || decoded.sub;
             if (!userId) {
-                console.log("Invalid user token.");
+                toast.error("Invalid user token.");
                 return;
             }
-    
-            console.log("User ID (Frontend):", userId);
     
             const requestBody = {
                 userId,
                 productId: id,
                 quantity: Number(quantity)
             };
-    
-            console.log("Request Body Sent to Backend:", requestBody);
     
             const res = await fetch('http://localhost:5000/api/cart/add', {
                 method: 'POST',
@@ -86,10 +78,9 @@ const ProductDetail = () => {
             });
     
             const data = await res.json();
-            console.log("Backend Response:", data);
     
             if (!res.ok) {
-                console.log(data.message || 'Failed to add product to cart.');
+                toast.error(data.message || 'Failed to add product to cart.');
                 return;
             }
     
@@ -97,25 +88,25 @@ const ProductDetail = () => {
             navigate('/cart-page');
         } catch (error) {
             console.error('Error adding product to cart:', error);
-            console.log('Something went wrong while adding to cart.');
+            toast.error('Something went wrong while adding to cart.');
         }
     };
     
 
     const deleteProduct = async () => {
-        const confirm = window.confirm("Sure want to delete?!");
-        if (!confirm) return;
+        if (!window.confirm("Are you sure you want to delete this product?")) return;
 
         try {
             const res = await fetch(`http://localhost:5000/api/products/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
-                    },
-                credentials:"include"
+                },
+                credentials: "include"
             });
 
             if (res.ok) {
+                toast.success("Product deleted successfully!");
                 navigate("/products");
             } else {
                 console.error('Failed to delete product:', await res.json());
@@ -132,41 +123,50 @@ const ProductDetail = () => {
             .catch(error => console.error("Error fetching product:", error));
     }, [id]);
 
-    if (!product) return <p>Loading...</p>;
+    if (!product) return <p className="text-center text-gray-500 mt-10">Loading...</p>;
 
     return (
-        <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg mt-32">
-            <h2 className="text-2xl font-semibold">{product.productName}</h2>
-            <p className="text-gray-600 mt-2">{product.productDescription}</p>
-            <p className="text-xl font-bold mt-4">Price: ${product.productPrice}</p>
-            <p className="mt-2">Quantity Available: {product.productQuantity}</p>
+        <div className="max-w-3xl mx-auto p-6 bg-pink-100 shadow-lg rounded-lg mt-10 sm:mt-16 md:mt-24 lg:mt-32">
+            <h2 className="text-2xl font-semibold text-center sm:text-left">{product.productName}</h2>
+            <p className="text-gray-600 mt-2 text-center sm:text-left">{product.productDescription}</p>
+            <p className="text-xl font-bold mt-4 text-center sm:text-left">Price: ₹{product.productPrice}</p>
+            <p className="mt-2 text-center sm:text-left">Quantity Available: {product.productQuantity}</p>
 
             {userType === "admin" ? (
-                <div className="mt-4 flex space-x-4">
-                    <Link to={`/edit-product/${id}`} className="bg-blue-500 text-white px-4 py-2 rounded">Edit</Link>
-                    <button onClick={deleteProduct} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+                <div className="mt-6 flex flex-col sm:flex-row sm:space-x-4 items-center">
+                    <Link to={`/edit-product/${id}`} className="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 rounded text-center">
+                        Edit
+                    </Link>
+                    <button onClick={deleteProduct} className="w-full sm:w-auto bg-red-500 text-white px-4 py-2 rounded mt-2 sm:mt-0">
+                        Delete
+                    </button>
                 </div>
             ) : userType === "user" ? (
-                <div className="mt-4">
-                    <label className="block mb-2 text-sm font-medium">Enter Quantity:</label>
+                <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Enter Quantity:</label>
                     <input 
                         type="number" 
                         value={quantity} 
                         onChange={(e) => setQuantity(e.target.value)} 
-                        className="border p-2 w-full rounded" 
+                        className="border p-2 w-full rounded"
                         max={product.productQuantity} 
                     />
-                    <button onClick={cartAdding} className="mt-4 bg-green-500 text-white px-4 py-2 rounded">Add to Cart</button>
+                    <button 
+                        onClick={cartAdding} 
+                        className="mt-4 w-full bg-pink-500 text-white px-4 py-2 rounded"
+                    >
+                        Add to Cart
+                    </button>
                 </div>
             ) : (
-                <p className="mt-4 text-gray-500">Loading user permissions...</p>
+                <p className="mt-6 text-gray-500 text-center">Loading user permissions...</p>
             )}
         </div>
     );
 };
 
 const productLoader = async ({ params }) => {
-    const res = await fetch(`http://localhost:5000/products/${params.id}`);
+    const res = await fetch(`http://localhost:5000/api/products/${params.id}`);
     const data = await res.json();
     return data;
 };

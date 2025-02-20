@@ -52,6 +52,15 @@ router.get("/:userId", async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
   }
 });
+router.get("/", async (req, res) => {
+  try {
+    const allCarts = await Cart.findAll({ include: [User, Product] });
+    res.status(200).json(allCarts);
+  } catch (error) {
+    console.error("Error fetching all carts:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
   
   router.put("/update", async (req, res) => {
@@ -74,21 +83,29 @@ router.get("/:userId", async (req, res) => {
   
   router.delete("/delete", async (req, res) => {
     try {
-      const { userId, productId } = req.body;
-      const cartItem = await Cart.findOne({ where: { userId, productId } });
-  
-      if (!cartItem) {
-        return res.status(404).json({ message: "Cart item not found" });
-      }
-  
-      await cartItem.destroy();
-      res.status(200).json({ message: "Cart item deleted" });
+        const { userId, productId } = req.body;
+
+        // Check if userId and productId exist
+        if (!userId || !productId) {
+            return res.status(400).json({ message: "Missing userId or productId" });
+        }
+
+        console.log("Received Delete Request - userId:", userId, "productId:", productId);
+
+        const cartItem = await Cart.findOne({ where: { userId, productId } });
+
+        if (!cartItem) {
+            return res.status(404).json({ message: "Cart item not found" });
+        }
+
+        await cartItem.destroy();
+        res.status(200).json({ message: "Cart item deleted successfully" });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
+        console.error("Error in delete route:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-  });
-  
+});
+
 
 module.exports = router;
 

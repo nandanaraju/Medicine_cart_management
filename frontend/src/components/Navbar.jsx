@@ -1,66 +1,101 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { AiOutlineHome, AiOutlineMedicineBox, AiOutlineUser, AiOutlineShoppingCart } from "react-icons/ai";
-import { FaMapMarkerAlt } from "react-icons/fa";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AiOutlineUser, AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
+import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
-  return (
-    <motion.nav
-      className="bg-gradient-to-r from-green-700 to-green-900 text-white py-4 px-6 shadow-lg fixed w-full top-0 z-50"
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-    >
-      <div className="container mx-auto flex justify-between items-center">
-        {/* Logo */}
-        <motion.div
-          className="flex items-center text-2xl font-extrabold tracking-wide"
-          whileHover={{ scale: 1.1 }}
-        >
-          <span className="text-white">MedCart</span>
-          <span className=""> Pharmacy</span>
-        </motion.div>
+    const [userType, setUserType] = useState(null);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const navigate = useNavigate();
 
-        {/* Navigation Links */}
-        <div className="hidden md:flex space-x-8 text-sm font-semibold">
-          {[
-            { to: "/", label: "Home", icon: <AiOutlineHome /> },
-            { to: "/medicine", label: "Medicine", icon: <AiOutlineMedicineBox /> },
-            { to: "/store-locator", label: "Store Locator", icon: <FaMapMarkerAlt /> },
-          ].map((item, index) => (
-            <motion.div
-              key={index}
-              whileHover={{ scale: 1.1, color: "#FACC15" }}
-              transition={{ duration: 0.2 }}
-            >
-              <Link to={item.to} className="flex items-center space-x-2 hover:text-white hover:underline transition-all">
-                {item.icon} <span>{item.label}</span>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+    useEffect(() => {
+        const getUserType = () => {
+            const authToken = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('Authtoken'))
+                ?.split('=')[1];
+            if (authToken) {
+                const decoded = jwtDecode(authToken);
+                return decoded.userType;
+            }
+            return null;
+        };
+        setUserType(getUserType());
+    }, []);
 
-        {/* User & Cart */}
-        <div className="flex space-x-4">
-          <Link
-          to="/register"
-            className="flex items-center text-white px-2 py-2 r font-semibold   transition-all"
-            whileHover={{ scale: 1.05 }}
-            
-          >
-            <AiOutlineUser className="mr-2" /> Sign In
-          </Link>
-          <motion.button
-            className="flex items-center text-white px-2 py-2 r font-semibold   transition-all"
-            whileHover={{ scale: 1.05 }}
-          >
-            <AiOutlineShoppingCart className="mr-2" /> Cart
-          </motion.button>
-        </div>
-      </div>
-    </motion.nav>
-  );
+    const handleLogout = async () => {
+        await fetch("http://localhost:5000/api/auth/logout", {
+            method: "GET",
+            credentials: "include",
+        });
+        toast.success("Logged out successfully");
+        navigate("/");
+    };
+
+    return (
+        <nav className="bg-pink-600 text-white p-4">
+            <div className="container mx-auto flex justify-between items-center">
+                {/* Logo */}
+                <div className="text-2xl font-bold flex items-center">
+                    MedCart
+                </div>
+
+                {/* Desktop Menu */}
+                <ul className="hidden md:flex space-x-10 font-bold">
+                    <li><Link to="/">Home</Link></li>
+                    <li><Link to="/products">Medicines</Link></li>
+                    <li><Link to="/profile">My Cart</Link></li>
+                    {userType === 'admin' && (
+                        <li><Link to="/dashboard">Dashboard</Link></li>
+                    )}
+                </ul>
+
+                {/* User Actions */}
+                <div className="hidden md:flex items-center space-x-4">
+                    {userType ? (
+                        <button onClick={handleLogout} className="flex items-center text-white px-2 py-2 font-semibold transition-all">
+                            <AiOutlineUser className="mr-2" /> Logout
+                        </button>
+                    ) : (
+                        <Link to="/register" className="flex items-center text-white px-2 py-2 font-semibold transition-all">
+                            <AiOutlineUser className="mr-2" /> Sign In
+                        </Link>
+                    )}
+                </div>
+
+                {/* Mobile Menu Button */}
+                <button className="md:hidden text-2xl" onClick={() => setMenuOpen(!menuOpen)}>
+                    {menuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
+                </button>
+            </div>
+
+            {/* Mobile Menu Dropdown */}
+            {menuOpen && (
+                <div className="md:hidden bg-pink-700 text-white p-4 mt-2">
+                    <ul className="space-y-4 text-center">
+                        <li><Link to="/" onClick={() => setMenuOpen(false)}>Home</Link></li>
+                        <li><Link to="/products" onClick={() => setMenuOpen(false)}>Medicines</Link></li>
+                        <li><Link to="/cart" onClick={() => setMenuOpen(false)}>My Cart</Link></li>
+                        {userType === 'admin' && (
+                            <li><Link to="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</Link></li>
+                        )}
+                    </ul>
+                    <div className="mt-4 text-center">
+                        {userType ? (
+                            <button onClick={handleLogout} className="text-white font-semibold" >
+                                <AiOutlineUser className="inline-block mr-2" /> Logout
+                            </button>
+                        ) : (
+                            <Link to="/register" className="text-white font-semibold">
+                                <AiOutlineUser className="inline-block mr-2" /> Sign In
+                            </Link>
+                        )}
+                    </div>
+                </div>
+            )}
+        </nav>
+    );
 };
 
 export default Navbar;

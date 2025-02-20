@@ -10,12 +10,17 @@ import ProductDetail, { productLoader } from "./pages/ProductDetail";
 import AddProductPage from "./pages/AddProductPage";
 import EditProductPage from "./pages/EditProductPage";
 import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import AllCartPage from "./pages/AllCartPage";
+import MainLayout from "./layouts/MainLayout";
+import Footer from "./components/Footer";
 
 function App() {
   return (
       <Router>
         <Navbar/>
         <Routes>
+        <Route path="/" element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
@@ -24,6 +29,12 @@ function App() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/add-product" element={<AddProductPage />} />
           <Route path="/cart-page" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/cart" element={<AllCartPage />} />
+          <Route path="/footer" element={<Footer />} />
+          
+
+
 
           <Route
             path="/edit-product/:id"
@@ -36,6 +47,7 @@ function App() {
             element={<ProductDetail/>}
             loader={productLoader}
           />
+          </Route>
         </Routes>
       </Router>
   );
