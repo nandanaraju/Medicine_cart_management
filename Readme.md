@@ -1,29 +1,35 @@
-# MEDICINE CART MANAGEMENT SYSTEM
+# 🚀 MEDICINE CART MANAGEMENT SYSTEM
 
-## Setting Up the Project
+## 📌 Setting Up the Project
 
-Clone the repository to your local machine:  
+### 🔽 Clone the Repository
+
 ```
 git clone git@github.com:nandanaraju/Medicine_cart_management.git
 cd Medicine_cart_management
 ```
 
-Navigate to the backend folder:
+### ⚙ Navigate to the Backend Folder
+
 ```
 cd backend
 ```
 
-Install dependencies:
+### 📦 Install Dependencies
+
 ```
 npm install
 ```
 
-Start the PostgreSQL database service (if not already running):
+### 🗄 Start PostgreSQL Database Service (if not already running)
+
 ```
 sudo systemctl start postgresql
 ```
 
-Create a .env file in the backend folder and add the following content:
+### 🔑 Set Up Environment Variables
+
+Create a `.env` file in the `backend` folder and add the following content:
 
 ```
 DB_HOST=your_database_host
@@ -34,12 +40,65 @@ DB_PORT=your_database_port
 JWT_SECRET=your_jwt_secret
 ```
 
-Replace your_database_host, your_database_user, etc., with actual values. 
+Replace `your_database_host`, `your_database_user`, etc., with actual values.
 
-Once the environment variables are set up, start the backend server:
+### 🚀 Start the Backend Server
 
 ```
 node server.js
 ```
 
-Your backend should now be running and connected to the database successfully
+Your backend should now be running and connected to the database successfully.
+
+### 🌐 Navigate to the Frontend Folder
+
+```
+cd frontend
+```
+
+### 📦 Install Dependencies
+
+```
+npm install
+```
+
+### ▶ Start the Frontend Server
+
+```
+npm run dev
+```
+
+Now you can access the project at `localhost:5173`.
+
+---
+
+## 🔥 Functionalities
+
+### 🔐 JWT Token-Based Authentication
+
+- 🛡️ Secure authentication system using JWT tokens.
+- 👤 Separate roles for **Admin** and **User**.
+
+### 🏥 Admin Functionalities
+
+- ➕ **Add** new medicines.
+- ✏ **Edit** medicine details.
+- 🗑 **Delete** medicines from the inventory.
+- 🔄 **Change order status** using **drag-and-drop** with `@hello-pangea/dnd`:
+  - ⏳ **To Do**
+  - 🔄 **Pending**
+  - ✅ **Confirmed**
+
+### 🛍 User Functionalities
+
+- 🛒 **Add medicines** to the cart.
+- 📋 **View order status** once handled by the admin.
+
+---
+
+## 🖥 UI Enhancements
+
+- 🎨 Added intuitive **icons** for better user experience.
+- 🔄 **Real-time updates** for order status changes.
+
+---
