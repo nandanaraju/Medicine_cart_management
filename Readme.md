@@ -1,4 +1,16 @@
-# 🚀 MEDICINE CART MANAGEMENT SYSTEM
+
+# 🏥 MEDICINE CART MANAGEMENT SYSTEM 💊  
+
+A **web-based application** for managing medicine orders efficiently. It provides **role-based access** where **admins** can add, edit, delete medicines, and update order statuses using an **interactive drag-and-drop system**, while **users** can add medicines to their cart and track order progress. Built with **React.js, Node.js, Express.js, and PostgreSQL**, it ensures a smooth and secure experience with **JWT authentication**.  
+
+## 🚀 Tech Stack  
+- **Frontend**: React.js  
+- **Backend**: Node.js, Express.js  
+- **Database**: PostgreSQL  
+- **Authentication**: JWT  
+- **State Management**: React Hooks  
+- **Drag & Drop**: @hello-pangea/dnd  
+
 
 ## 📌 Setting Up the Project
 
